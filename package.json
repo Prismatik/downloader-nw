@@ -1,0 +1,26 @@
+{
+  "name": "downloader-nw",
+  "version": "1.0.0",
+  "description": "Downloader module for nw wrapper apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Prismatik/downloader-nw.git"
+  },
+  "author": "david@banham.id.au",
+  "license": "Proprietary",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/Prismatik/downloader-nw/issues"
+  },
+  "homepage": "https://github.com/Prismatik/downloader-nw",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.8",
+    "gulp-mocha": "^1.1.1",
+    "mocha": "^1.21.4"
+  }
+}

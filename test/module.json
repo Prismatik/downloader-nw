@@ -1,0 +1,41 @@
+{
+  "_id": "542b94dbb8058702003f0e3f",
+  "name": "test-module",
+  "version": "2",
+  "files": [
+    {
+      "localName": "index.html",
+      "localPath": "/",
+      "file": "542b586ace13450200190113",
+      "_id": "542b94dbb8058702003f0e3c",
+      "__v": 0,
+      "md5": "c9e41a13832d7062fc8a3604d715e45a",
+      "sha": "0c656b87d8f8214bfd9bb724107ab454a6cf52676f85886dd6070f9773b88dd6",
+      "url": "https://basefactory-test.s3.amazonaws.com/0c656b87d8f8214bfd9bb724107ab454a6cf52676f85886dd6070f9773b88dd6",
+      "size": 258
+    },
+    {
+      "localName": "cat.jpg",
+      "localPath": "/images",
+      "file": "542b5880ce13450200190114",
+      "_id": "542b94dbb8058702003f0e3d",
+      "__v": 0,
+      "md5": "468059c5a6671c998a4ce2fc3c5bb7e1",
+      "sha": "c48ecae2dd4017f8909d80e913ddeb582d93e5a301203a0a9cbc46cf5187b4a6",
+      "url": "https://basefactory-test.s3.amazonaws.com/c48ecae2dd4017f8909d80e913ddeb582d93e5a301203a0a9cbc46cf5187b4a6",
+      "size": 12381
+    },
+    {
+      "localName": "ice_cream.mp3",
+      "localPath": "/audio",
+      "file": "542bc9b16ae92502004484a8",
+      "_id": "542bca166ae92502004484a9",
+      "__v": 0,
+      "md5": "832055ceba80145353fefe17741b434c",
+      "sha": "0c5b6d0d52ba31ffcfe649d9625e7063812f54e84587c110ba0399bbe94529eb",
+      "url": "https://basefactory-test.s3.amazonaws.com/0c5b6d0d52ba31ffcfe649d9625e7063812f54e84587c110ba0399bbe94529eb",
+      "size": 88189
+    }
+  ],
+  "success": true
+}
