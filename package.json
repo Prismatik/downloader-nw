@@ -17,7 +17,9 @@
     "url": "https://github.com/Prismatik/downloader-nw/issues"
   },
   "homepage": "https://github.com/Prismatik/downloader-nw",
-  "dependencies": {},
+  "dependencies": {
+    "munge-semver": "^1.0.1"
+  },
   "devDependencies": {
     "gulp": "^3.8.8",
     "gulp-mocha": "^1.1.1",

@@ -8,6 +8,7 @@ var mkdirp = require('mkdirp');
 var crypto = require('crypto');
 
 var rand = Math.floor(Math.random() * (1 << 24)).toString(16);
+var rando = function() { return Math.floor(Math.random() * (1 << 24)).toString(16) };
 
 describe('paths', function() {
   it('should have a settable download cache path property', function() {
@@ -316,6 +317,61 @@ describe('downloader', function() {
           done();
         });
       });
+    });
+  });
+  describe('downloadAndVerify', function() {
+    it('should exist', function() {
+      assert(downloader.downloadAndVerify);
+    });
+  });
+  describe('getNavigationUrl', function() {
+    it('should exist', function() {
+      assert(downloader.getNavigationUrl);
+    });
+  });
+  describe('listAllModules', function() {
+    it('should exist', function() {
+      assert(downloader.listAllModules);
+    });
+    it('should list all modules', function(done) {
+      var mod1_id = rando();
+      var mod2_id = rando();
+      var mod1 = path.join(bundlePath, mod1_id);
+      var mod2 = path.join(modulePath, mod2_id);
+      mkdirp.sync(mod1);
+      mkdirp.sync(mod2);
+      fs.writeFileSync(path.join(mod1, 'version.json'), '{"version": "0.0.1"}');
+      fs.writeFileSync(path.join(mod2, 'version.json'), '{"version": "0.0.2"}');
+      downloader.listAllModules(function(err, info) {
+        assert(!err);
+        assert.deepEqual(info[mod1_id], {loc: 'bundled', version: '0.0.1'});
+        assert.deepEqual(info[mod2_id], {loc: 'installed', version: '0.0.2'});
+        done();
+      });
+    });
+  });
+  describe('bundledOrInstalled', function() {
+    it('should exist', function() {
+      assert(downloader.bundledOrInstalled);
+    });
+    it('should return the newest version', function(done) {
+      var mod_id = rando();
+      var mod1 = path.join(bundlePath, mod_id);
+      var mod2 = path.join(modulePath, mod_id);
+      mkdirp.sync(mod1);
+      mkdirp.sync(mod2);
+      fs.writeFileSync(path.join(mod1, 'version.json'), '{"version": "0.0.1"}');
+      fs.writeFileSync(path.join(mod2, 'version.json'), '{"version": "0.0.2"}');
+      downloader.bundledOrInstalled(mod_id, function(err, info) {
+        assert.deepEqual(err, null);
+        assert.deepEqual(info, {loc: 'installed', version: '0.0.2'});
+        done();
+      });
+    });
+  });
+  describe('writeVersionFile', function() {
+    it('should exist', function() {
+      assert(downloader.writeVersionFile);
     });
   });
 });

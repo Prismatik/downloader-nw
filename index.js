@@ -7,12 +7,18 @@ var mkdirp = require('mkdirp');
 var request = require('request');
 var crypto = require('crypto');
 var rimraf = require('rimraf');
+var semver = require('semver');
+var mungeSemver = require('munge-semver');
 
 Downloader = function(){
   this.concurrency = 5;
   this.downloadCache = '/tmp';
   this.modulePath = path.join('..', 'installed');
   this.bundlePath = path.join('..', 'bundled');
+  this.paths = {
+    installed: this.modulePath,
+    bundled: this.bundlePath
+  };
   this.maxFailures = 3;
   this.currentDls = {};
   return this;
@@ -304,6 +310,101 @@ Downloader.prototype.bundleInit = function(callback) {
 
     async.eachSeries(files, copyBundledModuleToCache, callback);
   });
+};
+
+Downloader.prototype.downloadAndVerify = function(module, onUpdate, callback) {
+  if (arguments.length === 2) {
+    callback = onUpdate;
+    onUpdate = function(){};
+  }
+  var failures = 0;
+  var that = this;
+  this.on('file', function() {
+    onUpdate && onUpdate(that.progress.bytes, that.progress.totalSize);
+  });
+  var iterate = function() {
+    that.downloadModuleToDevice(module, function(err) {
+      that.cacheCheck(module.files, function(err, complete) {
+        if (err) {
+          failures++;
+          if (failures >= that.maxFailures) return callback(err);
+          return iterate();
+        } else if (!complete) {
+          failures++;
+          if (failures >= that.maxFailures) return callback(new Error('max failures reached'));
+          return iterate();
+        }
+        that.copyModuleIntoPlace(module, function(err) {
+          if (err) return callback(err);
+          return that.writeVersionFile(module, callback);
+        });
+      })
+    })
+  };
+  iterate()
+};
+
+Downloader.prototype.bundledOrInstalled = function(moduleName, callback) {
+  var that = this;
+
+  this.moduleInfo(moduleName, function(err, info) {
+    if (err) return callback(err);
+
+    ['installed', 'bundled'].forEach(function(prop) {
+      if (!info[prop]) info[prop] = {};
+      if (!info[prop].version) info[prop].version = '0.0.0';
+    });
+
+    var installedVersion = mungeSemver(info.installed.version);
+    var bundledVersion = mungeSemver(info.bundled.version);
+
+    if(semver.gt(installedVersion, bundledVersion)) {
+      return callback(null, {loc: 'installed', version: installedVersion});
+    } else {
+      return callback(null, {loc: 'bundled', version: bundledVersion});
+    }
+  });
+};
+
+Downloader.prototype.getNavigationUrl = function(navId, callback) {
+  var that = this;
+  this.bundledOrInstalled(navId, function(err, info) {
+    if (err) return callback(err);
+    return callback(null, path.join(that.paths[info.loc], navId, 'index.html'));
+  });
+};
+
+Downloader.prototype.listAllModules = function(callback) {
+  var _this = this;
+  async.parallel({
+    installed: function(callback) {
+      fs.readdir(_this.modulePath, callback);
+    },
+    bundled: function(callback) {
+      fs.readdir(_this.bundlePath, callback);
+    }
+  }, function(err, lists) {
+    if (err) return callback(err);
+    names = _.flatten([].concat(lists.installed, lists.bundled)).filter(function(name) {
+      if (name === '.DS_Store') return false;
+      return true;
+    });
+
+    infoFuns = {};
+    names.forEach(function(name) {
+      infoFuns[name] = function(cb) {
+        _this.bundledOrInstalled(name, cb);
+      }
+    });
+
+    async.parallel(infoFuns, callback);
+
+  });
+};
+
+Downloader.prototype.writeVersionFile = function(module, callback) {
+  var targetFile = path.join(this.modulePath, module._id, 'version.json');
+  fs.writeFile(targetFile, JSON.stringify({version: module.version}), callback);
 };
 
 module.exports = new Downloader();
