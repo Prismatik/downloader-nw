@@ -13,8 +13,8 @@ var mungeSemver = require('munge-semver');
 Downloader = function(){
   this.concurrency = 5;
   this.downloadCache = '/tmp';
-  this.modulePath = path.join('..', 'installed');
-  this.bundlePath = path.join('..', 'bundled');
+  this.modulePath = path.join('installed');
+  this.bundlePath = path.join('bundled');
   this.paths = {
     installed: this.modulePath,
     bundled: this.bundlePath
