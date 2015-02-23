@@ -9,6 +9,7 @@ var crypto = require('crypto');
 var rimraf = require('rimraf');
 var semver = require('semver');
 var mungeSemver = require('munge-semver');
+var url = require('url');
 
 Downloader = function(){
   this.concurrency = 5;
